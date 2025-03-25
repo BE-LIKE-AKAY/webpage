@@ -1330,44 +1330,55 @@
             }
         }
 
-        async function respondToProposal(proposalId, response, isAccepted) {
-            try {
-                const updateData = {
-                    status: response,
-                    response: response,
-                    responseTime: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                await db.collection('proposals').doc(proposalId).update(updateData);
-                
-                document.getElementById('response-message').innerHTML = 
-                    `<div style="color: ${isAccepted ? 'var(--success)' : 'var(--danger)'}; font-weight:500;">
-                        <i class="fas fa-check-circle"></i> You responded "${response}". The sender has been notified.
-                    </div>`;
-                
-                acceptProposalBtn.disabled = true;
-                rejectProposalBtn.disabled = true;
-                
-                // Create confetti effect for "Yes" response
-                if (isAccepted) {
-                    createConfetti();
-                }
-                
-                // Notify the sender about the response
-                await notifyProposalResponse(proposalId, response);
-                
-                // Redirect after delay
-                setTimeout(() => {
-                    window.location.href = window.location.pathname;
-                }, 3000);
-                
-            } catch (error) {
-                document.getElementById('response-message').innerHTML = 
-                    `<div style="color: var(--danger);">
-                        <i class="fas fa-exclamation-circle"></i> Error submitting response: ${error.message}
-                    </div>`;
-            }
+          async function respondToProposal(proposalId, response, isAccepted) {
+    try {
+        // First get the proposal to verify the recipient
+        const proposalDoc = await db.collection('proposals').doc(proposalId).get();
+        if (!proposalDoc.exists) {
+            throw new Error('Proposal not found');
         }
+
+        const proposal = proposalDoc.data();
+        
+        // Verify this is the recipient responding (simplified check)
+        // In production, you might want a more robust verification
+        if (window.location.search.includes(proposalId)) {
+            const updateData = {
+                status: response,
+                response: response,
+                responseTime: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            await db.collection('proposals').doc(proposalId).update(updateData);
+            
+            document.getElementById('response-message').innerHTML = 
+                `<div style="color: ${isAccepted ? 'var(--success)' : 'var(--danger)'}; font-weight:500;">
+                    <i class="fas fa-check-circle"></i> You responded "${response}". The sender has been notified.
+                </div>`;
+            
+            acceptProposalBtn.disabled = true;
+            rejectProposalBtn.disabled = true;
+            
+            if (isAccepted) {
+                createConfetti();
+            }
+            
+            await notifyProposalResponse(proposalId, response);
+            
+            setTimeout(() => {
+                window.location.href = window.location.pathname;
+            }, 3000);
+        } else {
+            throw new Error('Unauthorized response attempt');
+        }
+    } catch (error) {
+        console.error('Response error:', error);
+        document.getElementById('response-message').innerHTML = 
+            `<div style="color: var(--danger);">
+                <i class="fas fa-exclamation-circle"></i> Error: ${error.message}
+            </div>`;
+    }
+}
 
         async function loadRecentProposals(userId) {
             try {
