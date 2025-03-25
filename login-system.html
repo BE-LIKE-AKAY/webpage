@@ -109,12 +109,6 @@
             display: none;
         }
         
-        /* Main Content */
-        .main-content {
-            margin-top: 80px;
-            min-height: calc(100vh - 160px);
-        }
-        
         /* Auth Containers */
         .auth-container {
             display: flex;
@@ -459,6 +453,15 @@
             font-weight: 500;
         }
         
+        /* Login/Signup Forms */
+        #login-container, #signup-container, #forgot-password-container {
+            display: none;
+        }
+        
+        #login-container.active, #signup-container.active, #forgot-password-container.active {
+            display: flex;
+        }
+        
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -467,6 +470,24 @@
         
         .fade-in {
             animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Confetti effect */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            opacity: 0;
+            top: 0;
+            left: 50%;
+            z-index: 9999;
+            animation: confetti 5s ease-in-out;
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
         
         /* Responsive */
@@ -496,24 +517,12 @@
             .auth-box {
                 padding: 30px 20px;
             }
-        }
-        
-        /* Confetti effect */
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background-color: var(--primary);
-            opacity: 0;
-            top: 0;
-            left: 50%;
-            z-index: 9999;
-            animation: confetti 5s ease-in-out;
-        }
-        
-        @keyframes confetti {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
         }
     </style>
 </head>
@@ -534,11 +543,106 @@
         </div>
     </nav>
 
+    <!-- Auth Containers -->
+    <div class="auth-container active" id="login-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h1><i class="fas fa-heart"></i> Welcome Back</h1>
+                <p>Sign in to access your proposals</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" class="form-control" required placeholder="Your email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" required placeholder="Your password">
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <div class="auth-footer">
+                    <a href="#" class="link" id="forgot-password-link">Forgot Password?</a> | 
+                    <a href="#" class="link" id="signup-link">Create Account</a>
+                </div>
+                <div id="login-error" class="error-message mt-20"></div>
+            </form>
+            
+            <div class="auth-providers">
+                <button id="google-login" class="auth-provider-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="auth-provider-icon">
+                    Continue with Google
+                </button>
+                <button id="facebook-login" class="auth-provider-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" class="auth-provider-icon">
+                    Continue with Facebook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-container" id="signup-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h1><i class="fas fa-heart"></i> Create Account</h1>
+                <p>Start sending beautiful proposals</p>
+            </div>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" class="form-control" required placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" class="form-control" required placeholder="Your email">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" class="form-control" required placeholder="Create password">
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-password">Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" class="form-control" required placeholder="Confirm password">
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                <div class="auth-footer">
+                    <a href="#" class="link" id="login-from-signup-link">Already have an account? Login</a>
+                </div>
+                <div id="signup-error" class="error-message mt-20"></div>
+                <div id="signup-success" class="success-message mt-20"></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="auth-container" id="forgot-password-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h1><i class="fas fa-key"></i> Reset Password</h1>
+                <p>We'll send you a reset link</p>
+            </div>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="forgot-email">Email</label>
+                    <input type="email" id="forgot-email" class="form-control" required placeholder="Your email">
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Send Reset Link
+                </button>
+                <div class="auth-footer">
+                    <a href="#" class="link" id="login-from-forgot-link">Back to Login</a>
+                </div>
+                <div id="forgot-error" class="error-message mt-20"></div>
+                <div id="forgot-success" class="success-message mt-20"></div>
+            </form>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
-            <!-- All auth containers (login, signup, forgot password) -->
-            
             <!-- Home Page -->
             <div id="home-page" class="hidden fade-in">
                 <div class="dashboard-header">
@@ -623,14 +727,84 @@
                 </div>
             </div>
             
-            <!-- Profile Page (similar structure to other pages) -->
+            <!-- Profile Page -->
+            <div id="profile-page" class="hidden fade-in">
+                <div class="dashboard-header">
+                    <div class="welcome-message">
+                        <h1>Your Profile</h1>
+                        <p>Manage your account information</p>
+                    </div>
+                </div>
+                
+                <div class="proposal-form-container">
+                    <div class="profile-section">
+                        <h2><i class="fas fa-user-circle"></i> Account Information</h2>
+                        <div class="profile-info" id="profile-info">
+                            <p><strong><i class="fas fa-user"></i> Name:</strong> <span id="profile-name"></span></p>
+                            <p><strong><i class="fas fa-envelope"></i> Email:</strong> <span id="profile-email"></span></p>
+                            <p><strong><i class="fas fa-calendar-alt"></i> Account Created:</strong> <span id="profile-created"></span></p>
+                            <p><strong><i class="fas fa-sign-in-alt"></i> Provider:</strong> <span id="profile-provider"></span></p>
+                            <p><strong><i class="fas fa-check-circle"></i> Email Verified:</strong> <span id="profile-verified"></span></p>
+                        </div>
+                        <button id="edit-profile-btn" class="btn-outline" style="margin-top: 15px;">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                        <button id="verify-email-btn" class="btn-outline hidden" style="margin-top: 15px;">
+                            <i class="fas fa-envelope"></i> Verify Email
+                        </button>
+                    </div>
+
+                    <!-- Edit Profile Form -->
+                    <div class="profile-section hidden" id="edit-profile-form">
+                        <h2><i class="fas fa-edit"></i> Edit Profile</h2>
+                        <form id="update-profile-form">
+                            <div class="form-group">
+                                <label for="edit-name">Full Name</label>
+                                <input type="text" id="edit-name" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn">
+                                <i class="fas fa-save"></i> Update Profile
+                            </button>
+                            <div id="profile-update-error" class="error-message mt-20"></div>
+                            <div id="profile-update-success" class="success-message mt-20"></div>
+                        </form>
+                        <button id="cancel-edit-btn" class="btn-outline" style="margin-top: 15px;">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+
+                    <!-- Change Password Form -->
+                    <div class="profile-section" id="change-password-section">
+                        <h2><i class="fas fa-key"></i> Change Password</h2>
+                        <form id="change-password-form">
+                            <div class="form-group">
+                                <label for="current-password">Current Password</label>
+                                <input type="password" id="current-password" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-new-password">Confirm New Password</label>
+                                <input type="password" id="confirm-new-password" class="form-control">
+                            </div>
+                            <button type="submit" class="btn">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                            <div id="password-change-error" class="error-message mt-20"></div>
+                            <div id="password-change-success" class="success-message mt-20"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
     <script>
         // Firebase configuration (replace with your actual config)
         const firebaseConfig = {
-             apiKey: "AIzaSyBLx5RMGQAEsLi-4dkp2eGfdiofAp5CpdQ",
+            apiKey: "AIzaSyBLx5RMGQAEsLi-4dkp2eGfdiofAp5CpdQ",
              authDomain: "marriage-proposal-96533.firebaseapp.com",
              projectId: "marriage-proposal-96533",
              storageBucket: "marriage-proposal-96533.firebasestorage.app",
@@ -651,14 +825,38 @@
         const createProposalBtn = document.getElementById('create-proposal-btn');
         const proposalsLink = document.getElementById('proposals-link');
         const homeLink = document.getElementById('home-link');
+        const profileLink = document.getElementById('profile-link');
+        const logoutLink = document.getElementById('logout-link');
         const homePage = document.getElementById('home-page');
         const createProposalPage = document.getElementById('create-proposal-page');
         const proposalResponsePage = document.getElementById('proposal-response-page');
         const myProposalsPage = document.getElementById('my-proposals-page');
+        const profilePage = document.getElementById('profile-page');
         const proposalForm = document.getElementById('proposal-form');
         const acceptProposalBtn = document.getElementById('accept-proposal');
         const rejectProposalBtn = document.getElementById('reject-proposal');
         const userGreeting = document.getElementById('user-greeting');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const verifyEmailBtn = document.getElementById('verify-email-btn');
+        const updateProfileForm = document.getElementById('update-profile-form');
+        const changePasswordForm = document.getElementById('change-password-form');
+        
+        // Auth containers and links
+        const loginContainer = document.getElementById('login-container');
+        const signupContainer = document.getElementById('signup-container');
+        const forgotPasswordContainer = document.getElementById('forgot-password-container');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const signupLink = document.getElementById('signup-link');
+        const loginFromSignupLink = document.getElementById('login-from-signup-link');
+        const loginFromForgotLink = document.getElementById('login-from-forgot-link');
+        
+        // Social login buttons
+        const googleLoginBtn = document.getElementById('google-login');
+        const facebookLoginBtn = document.getElementById('facebook-login');
 
         // Check for proposal ID in URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -721,6 +919,44 @@
             if (auth.currentUser) {
                 loadRecentProposals(auth.currentUser.uid);
             }
+        });
+
+        profileLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllPages();
+            profilePage.classList.remove('hidden');
+            if (auth.currentUser) {
+                updateProfileInfo(auth.currentUser);
+            }
+        });
+
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            auth.signOut().then(() => {
+                showLoginUI();
+            }).catch(error => {
+                console.error('Logout error:', error);
+            });
+        });
+
+        editProfileBtn.addEventListener('click', () => {
+            document.getElementById('edit-profile-form').classList.remove('hidden');
+        });
+
+        cancelEditBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('edit-profile-form').classList.add('hidden');
+        });
+
+        verifyEmailBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            auth.currentUser.sendEmailVerification()
+                .then(() => {
+                    alert('Verification email sent. Please check your inbox.');
+                })
+                .catch(error => {
+                    document.getElementById('profile-update-error').textContent = error.message;
+                });
         });
 
         proposalForm.addEventListener('submit', async (e) => {
@@ -804,11 +1040,249 @@
             await respondToProposal(proposalId, 'rejected', false);
         });
 
+        updateProfileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('edit-name').value;
+            const user = auth.currentUser;
+            
+            if (!user) return;
+            
+            try {
+                // Update in Firestore
+                await db.collection('users').doc(user.uid).update({
+                    name: name
+                });
+                
+                document.getElementById('profile-update-error').textContent = '';
+                document.getElementById('profile-update-success').textContent = 'Profile updated successfully!';
+                
+                // Update greeting if on home page
+                if (!homePage.classList.contains('hidden')) {
+                    userGreeting.textContent = name;
+                }
+                
+                // Close edit form after delay
+                setTimeout(() => {
+                    document.getElementById('profile-update-success').textContent = '';
+                    document.getElementById('edit-profile-form').classList.add('hidden');
+                }, 2000);
+                
+            } catch (error) {
+                document.getElementById('profile-update-error').textContent = error.message;
+            }
+        });
+
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmNewPassword = document.getElementById('confirm-new-password').value;
+            const user = auth.currentUser;
+            const email = user.email;
+            
+            if (newPassword !== confirmNewPassword) {
+                document.getElementById('password-change-error').textContent = 'New passwords do not match';
+                return;
+            }
+            
+            try {
+                // Reauthenticate user before changing password
+                const credential = firebase.auth.EmailAuthProvider.credential(email, currentPassword);
+                await user.reauthenticateWithCredential(credential);
+                
+                // Update password
+                await user.updatePassword(newPassword);
+                
+                document.getElementById('password-change-error').textContent = '';
+                document.getElementById('password-change-success').textContent = 'Password changed successfully!';
+                changePasswordForm.reset();
+                
+            } catch (error) {
+                document.getElementById('password-change-error').textContent = error.message;
+            }
+        });
+
+        // Auth form event listeners
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchAuthContainer('forgot-password');
+        });
+
+        signupLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchAuthContainer('signup');
+        });
+
+        loginFromSignupLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchAuthContainer('login');
+        });
+
+        loginFromForgotLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchAuthContainer('login');
+        });
+
+        // Auth form submissions
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    document.getElementById('login-error').textContent = '';
+                    showAuthenticatedUI(userCredential.user);
+                })
+                .catch((error) => {
+                    document.getElementById('login-error').textContent = error.message;
+                });
+        });
+
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                document.getElementById('signup-error').textContent = 'Passwords do not match';
+                return;
+            }
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed up successfully
+                    const user = userCredential.user;
+                    
+                    // Save additional user data to Firestore
+                    return db.collection('users').doc(user.uid).set({
+                        name: name,
+                        email: email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        // Send email verification
+                        return user.sendEmailVerification();
+                    });
+                })
+                .then(() => {
+                    document.getElementById('signup-error').textContent = '';
+                    document.getElementById('signup-success').textContent = 'Account created successfully! Please verify your email.';
+                    signupForm.reset();
+                    
+                    setTimeout(() => {
+                        switchAuthContainer('login');
+                        document.getElementById('signup-success').textContent = '';
+                    }, 3000);
+                })
+                .catch((error) => {
+                    document.getElementById('signup-error').textContent = error.message;
+                });
+        });
+
+        forgotPasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value;
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    document.getElementById('forgot-error').textContent = '';
+                    document.getElementById('forgot-success').textContent = 'Password reset email sent. Please check your inbox.';
+                    forgotPasswordForm.reset();
+                })
+                .catch((error) => {
+                    document.getElementById('forgot-error').textContent = error.message;
+                });
+        });
+
+        // Social login handlers
+        googleLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    // Check if user is new
+                    if (result.additionalUserInfo.isNewUser) {
+                        // Save user data to Firestore
+                        return db.collection('users').doc(result.user.uid).set({
+                            name: result.user.displayName,
+                            email: result.user.email,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                })
+                .catch((error) => {
+                    document.getElementById('login-error').textContent = error.message;
+                });
+        });
+
+        facebookLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const provider = new firebase.auth.FacebookAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    // Check if user is new
+                    if (result.additionalUserInfo.isNewUser) {
+                        // Save user data to Firestore
+                        return db.collection('users').doc(result.user.uid).set({
+                            name: result.user.displayName,
+                            email: result.user.email,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                })
+                .catch((error) => {
+                    document.getElementById('login-error').textContent = error.message;
+                });
+        });
+
         // Helper functions
         function hideAllPages() {
             document.querySelectorAll('.main-content > .container > div').forEach(div => {
                 div.classList.add('hidden');
             });
+        }
+
+        function switchAuthContainer(container) {
+            loginContainer.classList.remove('active');
+            signupContainer.classList.remove('active');
+            forgotPasswordContainer.classList.remove('active');
+            
+            if (container === 'login') {
+                loginContainer.classList.add('active');
+            } else if (container === 'signup') {
+                signupContainer.classList.add('active');
+            } else if (container === 'forgot-password') {
+                forgotPasswordContainer.classList.add('active');
+            }
+        }
+
+        function showAuthenticatedUI(user) {
+            // Hide auth containers
+            loginContainer.classList.remove('active');
+            signupContainer.classList.remove('active');
+            forgotPasswordContainer.classList.remove('active');
+            
+            // Show app UI
+            nav.classList.remove('hidden');
+            homePage.classList.remove('hidden');
+            
+            // Load user data
+            updateProfileInfo(user);
+        }
+
+        function showLoginUI() {
+            // Show auth container
+            switchAuthContainer('login');
+            
+            // Hide app UI
+            nav.classList.add('hidden');
+            homePage.classList.add('hidden');
+            profilePage.classList.add('hidden');
+            myProposalsPage.classList.add('hidden');
+            createProposalPage.classList.add('hidden');
         }
 
         async function showProposalResponsePage(proposalId) {
@@ -1040,6 +1514,40 @@
             }
         }
 
+        function updateProfileInfo(user) {
+            if (user) {
+                // Get user data from Firestore
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        document.getElementById('profile-name').textContent = userData.name || 'Not set';
+                        document.getElementById('edit-name').value = userData.name || '';
+                    } else {
+                        document.getElementById('profile-name').textContent = 'Not set';
+                    }
+                });
+
+                document.getElementById('profile-email').textContent = user.email || 'Not set';
+                document.getElementById('profile-created').textContent = new Date(user.metadata.creationTime).toLocaleString();
+                document.getElementById('profile-provider').textContent = user.providerData[0]?.providerId || 'Email/Password';
+                document.getElementById('profile-verified').textContent = user.emailVerified ? 'Yes' : 'No';
+
+                // Show verify email button if email is not verified
+                if (!user.emailVerified && user.providerData[0]?.providerId === 'password') {
+                    verifyEmailBtn.classList.remove('hidden');
+                } else {
+                    verifyEmailBtn.classList.add('hidden');
+                }
+
+                // Hide change password section if user didn't sign up with email/password
+                if (user.providerData[0]?.providerId !== 'password') {
+                    document.getElementById('change-password-section').classList.add('hidden');
+                } else {
+                    document.getElementById('change-password-section').classList.remove('hidden');
+                }
+            }
+        }
+
         function createConfetti() {
             for (let i = 0; i < 100; i++) {
                 const confetti = document.createElement('div');
@@ -1054,6 +1562,22 @@
                     confetti.remove();
                 }, 5000);
             }
+        }
+
+        async function notifyProposalView(proposalId) {
+            // In a real app, you would implement this using Firebase Cloud Messaging
+            // or send an email notification via a Cloud Function
+            console.log(`Proposal ${proposalId} was viewed - notification would be sent here`);
+        }
+
+        async function notifyProposalResponse(proposalId, response) {
+            // In a real app, you would implement this using Firebase Cloud Messaging
+            // or send an email notification via a Cloud Function
+            console.log(`Proposal ${proposalId} got response ${response} - notification would be sent here`);
+            
+            // Example of how you might implement this with a Cloud Function:
+            // const sendNotification = functions.httpsCallable('sendProposalResponseNotification');
+            // await sendNotification({ proposalId, response });
         }
 
         // Global functions for buttons
@@ -1096,10 +1620,6 @@
         window.viewProposalDetails = function(proposalId) {
             window.open(`?proposal=${proposalId}`, '_blank');
         };
-
-        // All previous authentication code remains the same
-        // (login, signup, profile management, etc.)
     </script>
 </body>
 </html>
-        
