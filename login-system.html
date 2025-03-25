@@ -3,155 +3,629 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Proposal System</title>
-    <!-- Add Firebase SDK -->
+    <title>HeartLink - Love Proposal App</title>
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-functions.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Previous styles remain the same */
-        /* Add these new styles */
+        :root {
+            --primary: #ff4d6d;
+            --primary-dark: #c9184a;
+            --secondary: #ff8fa3;
+            --light: #fff0f3;
+            --dark: #2b2d42;
+            --success: #38b000;
+            --danger: #ef233c;
+            --warning: #ffaa00;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fef6f8;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a i {
+            margin-right: 8px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+        
+        /* Auth Containers */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 40px 0;
+        }
+        
+        .auth-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+        
+        .auth-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .auth-header p {
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-20 {
+            margin-top: 20px;
+        }
+        
+        .link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .link:hover {
+            text-decoration: underline;
+        }
+        
+        .auth-footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+        
+        /* Social Auth */
+        .auth-providers {
+            margin-top: 30px;
+        }
+        
+        .auth-provider-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            background-color: white;
+            color: var(--dark);
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            transition: var(--transition);
+        }
+        
+        .auth-provider-btn:hover {
+            background-color: #f9f9f9;
+            transform: translateY(-2px);
+        }
+        
+        .auth-provider-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        
+        /* Dashboard */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .welcome-message h1 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .welcome-message p {
+            color: #666;
+        }
+        
+        /* Proposal Cards */
         .proposal-card {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 25px;
             position: relative;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
         }
+        
+        .proposal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.15);
+        }
+        
         .proposal-status {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
+            top: 15px;
+            right: 15px;
+            padding: 5px 15px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600;
         }
+        
         .pending { background: #fff3cd; color: #856404; }
         .accepted { background: #d4edda; color: #155724; }
         .rejected { background: #f8d7da; color: #721c24; }
+        
         .proposal-actions {
-            margin-top: 15px;
+            margin-top: 20px;
             display: flex;
             gap: 10px;
         }
-        .proposal-form {
-            max-width: 600px;
+        
+        .action-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .action-btn i {
+            margin-right: 5px;
+        }
+        
+        .share-btn {
+            background: var(--light);
+            color: var(--primary);
+        }
+        
+        .share-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .view-btn {
+            background: #e9ecef;
+            color: var(--dark);
+        }
+        
+        .view-btn:hover {
+            background: #dee2e6;
+        }
+        
+        /* Create Proposal Form */
+        .proposal-form-container {
+            max-width: 700px;
             margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
         }
-        .proposal-response {
+        
+        .form-title {
+            color: var(--primary);
+            margin-bottom: 20px;
             text-align: center;
-            margin-top: 30px;
         }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        /* Proposal Response Page */
+        .proposal-response-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .proposal-heart {
+            font-size: 60px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .proposal-message {
+            font-style: italic;
+            margin: 30px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 8px;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+        
         .response-buttons {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-top: 20px;
+            margin-top: 30px;
         }
+        
         .response-btn {
-            padding: 12px 30px;
+            padding: 15px 40px;
             font-size: 18px;
             border-radius: 50px;
             cursor: pointer;
+            border: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
         }
+        
+        .response-btn i {
+            margin-right: 8px;
+        }
+        
         .yes-btn {
-            background-color: #28a745;
+            background-color: var(--success);
             color: white;
         }
+        
+        .yes-btn:hover {
+            background-color: #2b9348;
+            transform: translateY(-3px);
+        }
+        
         .no-btn {
-            background-color: #dc3545;
+            background-color: var(--danger);
             color: white;
         }
-        .proposal-message {
-            font-style: italic;
-            margin: 20px 0;
+        
+        .no-btn:hover {
+            background-color: #d00000;
+            transform: translateY(-3px);
+        }
+        
+        .response-message {
+            margin-top: 30px;
             padding: 15px;
-            background: #f8f9fa;
-            border-left: 4px solid #6c757d;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                padding: 15px 0;
+            }
+            
+            .nav-links {
+                margin-top: 15px;
+            }
+            
+            .nav-links a {
+                margin: 0 10px;
+            }
+            
+            .response-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .proposal-actions {
+                flex-direction: column;
+            }
+            
+            .auth-box {
+                padding: 30px 20px;
+            }
+        }
+        
+        /* Confetti effect */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            opacity: 0;
+            top: 0;
+            left: 50%;
+            z-index: 9999;
+            animation: confetti 5s ease-in-out;
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation (same as before) -->
-    <div class="nav hidden" id="nav">
+    <!-- Navigation -->
+    <nav class="nav hidden" id="nav">
         <div class="container nav-container">
-            <h1>Love Proposal</h1>
+            <a href="#" class="logo" id="home-logo">
+                <i class="fas fa-heart"></i>
+                HeartLink
+            </a>
             <div class="nav-links">
-                <a href="#" id="home-link">Home</a>
-                <a href="#" id="profile-link">Profile</a>
-                <a href="#" id="proposals-link">My Proposals</a>
-                <a href="#" id="logout-link">Logout</a>
+                <a href="#" id="home-link"><i class="fas fa-home"></i> Home</a>
+                <a href="#" id="proposals-link"><i class="fas fa-envelope"></i> My Proposals</a>
+                <a href="#" id="profile-link"><i class="fas fa-user"></i> Profile</a>
+                <a href="#" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- Main Content Container -->
-    <div class="container" id="main-content">
-        <!-- All previous auth containers remain the same -->
-        
-        <!-- Home Page (updated) -->
-        <div id="home-page" class="hidden">
-            <h1>Welcome to Your Dashboard</h1>
-            <div class="text-center">
-                <button id="create-proposal-btn" class="link">Create New Proposal</button>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- All auth containers (login, signup, forgot password) -->
+            
+            <!-- Home Page -->
+            <div id="home-page" class="hidden fade-in">
+                <div class="dashboard-header">
+                    <div class="welcome-message">
+                        <h1>Welcome, <span id="user-greeting">User</span>!</h1>
+                        <p>Create and manage your love proposals</p>
+                    </div>
+                    <button id="create-proposal-btn" class="btn">
+                        <i class="fas fa-plus"></i> New Proposal
+                    </button>
+                </div>
+                
+                <div id="proposals-list">
+                    <h2>Recent Proposals</h2>
+                    <div id="recent-proposals" class="mt-20">
+                        <!-- Recent proposals will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Proposal Page -->
+            <div id="create-proposal-page" class="hidden fade-in">
+                <div class="proposal-form-container">
+                    <h1 class="form-title"><i class="fas fa-heart"></i> Create Your Proposal</h1>
+                    <form id="proposal-form">
+                        <div class="form-group">
+                            <label for="recipient-name"><i class="fas fa-user"></i> Recipient Name</label>
+                            <input type="text" id="recipient-name" class="form-control" required placeholder="Enter their name">
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-email"><i class="fas fa-envelope"></i> Recipient Email or Phone</label>
+                            <input type="text" id="recipient-email" class="form-control" required placeholder="Enter their email or phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="proposal-message"><i class="fas fa-comment"></i> Your Heartfelt Message</label>
+                            <textarea id="proposal-message" class="form-control" required placeholder="Pour your heart out..."></textarea>
+                        </div>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-paper-plane"></i> Send Proposal
+                        </button>
+                        <div id="proposal-error" class="error-message mt-20"></div>
+                        <div id="proposal-success" class="success-message mt-20"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Proposal Response Page -->
+            <div id="proposal-response-page" class="hidden fade-in">
+                <div class="proposal-response-container">
+                    <div class="proposal-heart">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h1 id="proposal-title">You Have a Special Proposal!</h1>
+                    <p>From: <span id="proposal-sender" style="font-weight:600;"></span></p>
+                    
+                    <div class="proposal-message" id="proposal-display-message"></div>
+                    
+                    <div class="response-buttons">
+                        <button class="response-btn yes-btn" id="accept-proposal">
+                            <i class="fas fa-check"></i> Yes, Absolutely!
+                        </button>
+                        <button class="response-btn no-btn" id="reject-proposal">
+                            <i class="fas fa-times"></i> No, Sorry
+                        </button>
+                    </div>
+                    
+                    <div id="response-message" class="response-message"></div>
+                </div>
+            </div>
+
+            <!-- My Proposals Page -->
+            <div id="my-proposals-page" class="hidden fade-in">
+                <div class="dashboard-header">
+                    <div class="welcome-message">
+                        <h1>My Proposals</h1>
+                        <p>All the love you've sent out into the world</p>
+                    </div>
+                </div>
+                
+                <div id="user-proposals-list">
+                    <!-- User's proposals will be loaded here -->
+                </div>
             </div>
             
-            <div id="proposals-list" class="mt-20">
-                <!-- Proposals will be loaded here -->
-            </div>
+            <!-- Profile Page (similar structure to other pages) -->
         </div>
-
-        <!-- Create Proposal Page -->
-        <div id="create-proposal-page" class="hidden">
-            <h1>Create New Proposal</h1>
-            <div class="proposal-form">
-                <form id="proposal-form">
-                    <div class="form-group">
-                        <label for="recipient-name">Recipient Name</label>
-                        <input type="text" id="recipient-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-email">Recipient Email or Phone</label>
-                        <input type="text" id="recipient-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="proposal-message">Your Message</label>
-                        <textarea id="proposal-message" rows="5" style="width:100%; padding:10px;" required></textarea>
-                    </div>
-                    <button type="submit">Generate Proposal Link</button>
-                    <div id="proposal-error" class="error-message"></div>
-                    <div id="proposal-success" class="success-message"></div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Proposal Response Page -->
-        <div id="proposal-response-page" class="hidden">
-            <div class="proposal-response">
-                <h1 id="proposal-title">You Have a Proposal!</h1>
-                <div class="proposal-message" id="proposal-display-message"></div>
-                <div class="response-buttons">
-                    <button class="response-btn yes-btn" id="accept-proposal">Yes</button>
-                    <button class="response-btn no-btn" id="reject-proposal">No</button>
-                </div>
-                <div id="response-message" class="mt-20"></div>
-            </div>
-        </div>
-
-        <!-- My Proposals Page -->
-        <div id="my-proposals-page" class="hidden">
-            <h1>My Proposals</h1>
-            <div id="user-proposals-list">
-                <!-- User's proposals will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Previous profile page remains the same -->
-    </div>
+    </main>
 
     <script>
         // Firebase configuration (replace with your actual config)
@@ -170,17 +644,21 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         const functions = firebase.functions();
-        const messaging = firebase.messaging();
 
         // DOM Elements
+        const nav = document.getElementById('nav');
+        const homeLogo = document.getElementById('home-logo');
         const createProposalBtn = document.getElementById('create-proposal-btn');
         const proposalsLink = document.getElementById('proposals-link');
+        const homeLink = document.getElementById('home-link');
+        const homePage = document.getElementById('home-page');
         const createProposalPage = document.getElementById('create-proposal-page');
         const proposalResponsePage = document.getElementById('proposal-response-page');
         const myProposalsPage = document.getElementById('my-proposals-page');
         const proposalForm = document.getElementById('proposal-form');
         const acceptProposalBtn = document.getElementById('accept-proposal');
         const rejectProposalBtn = document.getElementById('reject-proposal');
+        const userGreeting = document.getElementById('user-greeting');
 
         // Check for proposal ID in URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -192,22 +670,36 @@
                 if (user) {
                     showAuthenticatedUI(user);
                     
+                    // Set user greeting
+                    db.collection('users').doc(user.uid).get().then(doc => {
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            userGreeting.textContent = userData.name || 'User';
+                        }
+                    });
+                    
                     // Check if this is a proposal response page
                     if (proposalId) {
                         showProposalResponsePage(proposalId);
                     } else {
-                        loadUserProposals(user.uid);
+                        loadRecentProposals(user.uid);
                     }
                 } else {
                     showLoginUI();
                 }
             });
-            
-            // Request notification permission
-            requestNotificationPermission();
         });
 
         // Event Listeners
+        homeLogo.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllPages();
+            homePage.classList.remove('hidden');
+            if (auth.currentUser) {
+                loadRecentProposals(auth.currentUser.uid);
+            }
+        });
+
         createProposalBtn.addEventListener('click', () => {
             hideAllPages();
             createProposalPage.classList.remove('hidden');
@@ -222,6 +714,15 @@
             }
         });
 
+        homeLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllPages();
+            homePage.classList.remove('hidden');
+            if (auth.currentUser) {
+                loadRecentProposals(auth.currentUser.uid);
+            }
+        });
+
         proposalForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -233,10 +734,14 @@
             const message = document.getElementById('proposal-message').value;
             
             try {
+                // Get sender's name from Firestore
+                const senderDoc = await db.collection('users').doc(sender.uid).get();
+                const senderName = senderDoc.exists ? senderDoc.data().name : sender.email;
+                
                 // Create proposal in Firestore
                 const proposalRef = await db.collection('proposals').add({
                     senderId: sender.uid,
-                    senderName: sender.displayName || 'Anonymous',
+                    senderName: senderName,
                     senderEmail: sender.email,
                     recipientName,
                     recipientContact,
@@ -246,7 +751,8 @@
                     viewed: false,
                     response: null,
                     responseTime: null,
-                    viewerIP: null
+                    viewerIP: null,
+                    viewerLocation: null
                 });
                 
                 // Generate shareable link
@@ -255,20 +761,35 @@
                 // Display success message with link
                 document.getElementById('proposal-error').textContent = '';
                 document.getElementById('proposal-success').innerHTML = `
-                    Proposal created successfully!<br><br>
-                    Share this link:<br>
-                    <input type="text" value="${proposalLink}" style="width:100%; padding:8px; margin-top:10px;" readonly>
-                    <button onclick="copyToClipboard('${proposalLink}')" style="margin-top:10px;">Copy Link</button>
+                    <div style="background: #e6f7ee; padding: 15px; border-radius: 8px;">
+                        <h3 style="color: var(--success); margin-bottom: 10px;">
+                            <i class="fas fa-check-circle"></i> Proposal Created!
+                        </h3>
+                        <p>Share this special link with your loved one:</p>
+                        <div style="display: flex; margin-top: 10px;">
+                            <input type="text" value="${proposalLink}" id="proposal-link-input" 
+                                style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px 0 0 8px; border-right: none;">
+                            <button onclick="copyToClipboard('${proposalLink}')" 
+                                style="padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 0 8px 8px 0; cursor: pointer;">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button onclick="shareProposal('${proposalRef.id}')" 
+                                style="padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; width: 100%;">
+                                <i class="fas fa-share-alt"></i> Share via...
+                            </button>
+                        </div>
+                    </div>
                 `;
                 
                 // Reset form
                 proposalForm.reset();
                 
                 // Reload proposals list
-                loadUserProposals(sender.uid);
+                loadRecentProposals(sender.uid);
                 
-                // TODO: In a real app, you would send the link via email/SMS here
-                // You could use a Firebase Cloud Function for this
+                // TODO: In a real app, send email/SMS notification here
                 
             } catch (error) {
                 document.getElementById('proposal-error').textContent = error.message;
@@ -276,16 +797,16 @@
         });
 
         acceptProposalBtn.addEventListener('click', async () => {
-            await respondToProposal(proposalId, 'accepted');
+            await respondToProposal(proposalId, 'accepted', true);
         });
 
         rejectProposalBtn.addEventListener('click', async () => {
-            await respondToProposal(proposalId, 'rejected');
+            await respondToProposal(proposalId, 'rejected', false);
         });
 
         // Helper functions
         function hideAllPages() {
-            document.querySelectorAll('#main-content > div').forEach(div => {
+            document.querySelectorAll('.main-content > .container > div').forEach(div => {
                 div.classList.add('hidden');
             });
         }
@@ -297,13 +818,14 @@
                 
                 const proposalDoc = await db.collection('proposals').doc(proposalId).get();
                 if (!proposalDoc.exists) {
-                    document.getElementById('proposal-display-message').textContent = 'Proposal not found';
+                    document.getElementById('proposal-display-message').textContent = 'Proposal not found or has been withdrawn';
                     return;
                 }
                 
                 const proposal = proposalDoc.data();
                 document.getElementById('proposal-display-message').textContent = proposal.message;
                 document.getElementById('proposal-title').textContent = `${proposal.senderName} Wants to Know...`;
+                document.getElementById('proposal-sender').textContent = proposal.senderName;
                 
                 // Record view information
                 await recordProposalView(proposalId);
@@ -315,14 +837,15 @@
 
         async function recordProposalView(proposalId) {
             try {
-                // Get viewer IP (simplified - in production use a proper IP detection method)
-                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                // Get viewer IP and location (simplified - in production use a proper service)
+                const ipResponse = await fetch('https://ipapi.co/json/');
                 const ipData = await ipResponse.json();
                 
                 await db.collection('proposals').doc(proposalId).update({
                     viewed: true,
                     viewTime: firebase.firestore.FieldValue.serverTimestamp(),
-                    viewerIP: ipData.ip
+                    viewerIP: ipData.ip,
+                    viewerLocation: `${ipData.city}, ${ipData.country_name}`
                 });
                 
                 // Notify the sender that their proposal was viewed
@@ -333,7 +856,7 @@
             }
         }
 
-        async function respondToProposal(proposalId, response) {
+        async function respondToProposal(proposalId, response, isAccepted) {
             try {
                 const updateData = {
                     status: response,
@@ -343,11 +866,18 @@
                 
                 await db.collection('proposals').doc(proposalId).update(updateData);
                 
-                document.getElementById('response-message').textContent = 
-                    `You responded ${response}. The sender has been notified.`;
+                document.getElementById('response-message').innerHTML = 
+                    `<div style="color: ${isAccepted ? 'var(--success)' : 'var(--danger)'}; font-weight:500;">
+                        <i class="fas fa-check-circle"></i> You responded "${response}". The sender has been notified.
+                    </div>`;
                 
                 acceptProposalBtn.disabled = true;
                 rejectProposalBtn.disabled = true;
+                
+                // Create confetti effect for "Yes" response
+                if (isAccepted) {
+                    createConfetti();
+                }
                 
                 // Notify the sender about the response
                 await notifyProposalResponse(proposalId, response);
@@ -358,15 +888,87 @@
                 }, 3000);
                 
             } catch (error) {
-                document.getElementById('response-message').textContent = 
-                    `Error submitting response: ${error.message}`;
+                document.getElementById('response-message').innerHTML = 
+                    `<div style="color: var(--danger);">
+                        <i class="fas fa-exclamation-circle"></i> Error submitting response: ${error.message}
+                    </div>`;
+            }
+        }
+
+        async function loadRecentProposals(userId) {
+            try {
+                const proposalsContainer = document.getElementById('recent-proposals');
+                proposalsContainer.innerHTML = '<p>Loading your recent proposals...</p>';
+                
+                const querySnapshot = await db.collection('proposals')
+                    .where('senderId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(3)
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    proposalsContainer.innerHTML = `
+                        <div style="text-align: center; padding: 30px; background: white; border-radius: 12px; box-shadow: var(--shadow);">
+                            <i class="fas fa-heart" style="font-size: 40px; color: var(--secondary); margin-bottom: 15px;"></i>
+                            <h3>No Proposals Yet</h3>
+                            <p>Create your first proposal to get started!</p>
+                            <button id="create-first-proposal" class="btn" style="margin-top: 15px;">
+                                <i class="fas fa-plus"></i> Create Proposal
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('create-first-proposal').addEventListener('click', () => {
+                        hideAllPages();
+                        createProposalPage.classList.remove('hidden');
+                    });
+                    return;
+                }
+                
+                proposalsContainer.innerHTML = '';
+                querySnapshot.forEach(doc => {
+                    const proposal = doc.data();
+                    const statusClass = proposal.status || 'pending';
+                    const viewedStatus = proposal.viewed ? 
+                        `<span style="color: var(--success);"><i class="fas fa-eye"></i> Viewed</span>` : 
+                        `<span style="color: #666;"><i class="fas fa-eye-slash"></i> Not viewed yet</span>`;
+                    
+                    const responseStatus = proposal.response ? 
+                        `<span style="color: ${proposal.response === 'accepted' ? 'var(--success)' : 'var(--danger)'};">
+                            <i class="fas fa-${proposal.response === 'accepted' ? 'check' : 'times'}"></i> ${proposal.response}
+                        </span>` : 
+                        '<span style="color: #666;"><i class="fas fa-clock"></i> Waiting for response</span>';
+                    
+                    const proposalCard = document.createElement('div');
+                    proposalCard.className = 'proposal-card fade-in';
+                    proposalCard.innerHTML = `
+                        <span class="proposal-status ${statusClass}">${statusClass}</span>
+                        <h3><i class="fas fa-user" style="color: var(--primary);"></i> To: ${proposal.recipientName}</h3>
+                        <p><i class="fas fa-envelope" style="color: #666;"></i> ${proposal.recipientContact}</p>
+                        <p style="margin: 15px 0; color: #555;">${proposal.message.substring(0, 100)}${proposal.message.length > 100 ? '...' : ''}</p>
+                        <p><small><i class="fas fa-calendar-alt" style="color: #666;"></i> Sent: ${new Date(proposal.createdAt?.toDate()).toLocaleString()}</small></p>
+                        <p><small>${viewedStatus} | ${responseStatus}</small></p>
+                        <div class="proposal-actions">
+                            <button class="action-btn share-btn" onclick="shareProposal('${doc.id}')">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                            <button class="action-btn view-btn" onclick="viewProposalDetails('${doc.id}')">
+                                <i class="fas fa-search"></i> Details
+                            </button>
+                        </div>
+                    `;
+                    proposalsContainer.appendChild(proposalCard);
+                });
+                
+            } catch (error) {
+                console.error('Error loading proposals:', error);
+                proposalsContainer.innerHTML = `<p style="color: var(--danger);">Error loading proposals: ${error.message}</p>`;
             }
         }
 
         async function loadUserProposals(userId) {
             try {
-                const proposalsList = document.getElementById('user-proposals-list');
-                proposalsList.innerHTML = '<p>Loading your proposals...</p>';
+                const proposalsContainer = document.getElementById('user-proposals-list');
+                proposalsContainer.innerHTML = '<p>Loading your proposals...</p>';
                 
                 const querySnapshot = await db.collection('proposals')
                     .where('senderId', '==', userId)
@@ -374,68 +976,107 @@
                     .get();
                 
                 if (querySnapshot.empty) {
-                    proposalsList.innerHTML = '<p>You have no proposals yet.</p>';
+                    proposalsContainer.innerHTML = `
+                        <div style="text-align: center; padding: 30px; background: white; border-radius: 12px; box-shadow: var(--shadow);">
+                            <i class="fas fa-heart" style="font-size: 40px; color: var(--secondary); margin-bottom: 15px;"></i>
+                            <h3>No Proposals Yet</h3>
+                            <p>Create your first proposal to get started!</p>
+                            <button id="create-first-proposal" class="btn" style="margin-top: 15px;">
+                                <i class="fas fa-plus"></i> Create Proposal
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('create-first-proposal').addEventListener('click', () => {
+                        hideAllPages();
+                        createProposalPage.classList.remove('hidden');
+                    });
                     return;
                 }
                 
-                proposalsList.innerHTML = '';
+                proposalsContainer.innerHTML = '';
                 querySnapshot.forEach(doc => {
                     const proposal = doc.data();
                     const statusClass = proposal.status || 'pending';
-                    const viewedStatus = proposal.viewed ? 'Viewed' : 'Not viewed yet';
+                    const viewedStatus = proposal.viewed ? 
+                        `<span style="color: var(--success);"><i class="fas fa-eye"></i> Viewed on ${new Date(proposal.viewTime?.toDate()).toLocaleDateString()}</span>` : 
+                        `<span style="color: #666;"><i class="fas fa-eye-slash"></i> Not viewed yet</span>`;
+                    
                     const responseStatus = proposal.response ? 
-                        `Response: ${proposal.response}` : 'Waiting for response';
+                        `<span style="color: ${proposal.response === 'accepted' ? 'var(--success)' : 'var(--danger)'};">
+                            <i class="fas fa-${proposal.response === 'accepted' ? 'check' : 'times'}"></i> ${proposal.response} on ${new Date(proposal.responseTime?.toDate()).toLocaleDateString()}
+                        </span>` : 
+                        '<span style="color: #666;"><i class="fas fa-clock"></i> Waiting for response</span>';
+                    
+                    const viewerInfo = proposal.viewed ? 
+                        `<p><small><i class="fas fa-map-marker-alt"></i> Viewed from: ${proposal.viewerLocation || 'Unknown location'}</small></p>` : '';
                     
                     const proposalCard = document.createElement('div');
-                    proposalCard.className = 'proposal-card';
+                    proposalCard.className = 'proposal-card fade-in';
                     proposalCard.innerHTML = `
                         <span class="proposal-status ${statusClass}">${statusClass}</span>
-                        <h3>To: ${proposal.recipientName} (${proposal.recipientContact})</h3>
-                        <p>${proposal.message}</p>
-                        <p><small>Sent: ${new Date(proposal.createdAt?.toDate()).toLocaleString()}</small></p>
+                        <h3><i class="fas fa-user" style="color: var(--primary);"></i> To: ${proposal.recipientName}</h3>
+                        <p><i class="fas fa-envelope" style="color: #666;"></i> ${proposal.recipientContact}</p>
+                        <div class="proposal-message" style="margin: 15px 0; font-style: normal;">
+                            ${proposal.message}
+                        </div>
+                        <p><small><i class="fas fa-calendar-alt" style="color: #666;"></i> Sent: ${new Date(proposal.createdAt?.toDate()).toLocaleString()}</small></p>
                         <p><small>${viewedStatus} | ${responseStatus}</small></p>
+                        ${viewerInfo}
                         <div class="proposal-actions">
-                            <button onclick="shareProposal('${doc.id}')">Share Again</button>
-                            <button onclick="viewProposal('${doc.id}')">View Details</button>
+                            <button class="action-btn share-btn" onclick="shareProposal('${doc.id}')">
+                                <i class="fas fa-share-alt"></i> Share Again
+                            </button>
+                            <button class="action-btn view-btn" onclick="viewProposalDetails('${doc.id}')">
+                                <i class="fas fa-search"></i> View Details
+                            </button>
                         </div>
                     `;
-                    proposalsList.appendChild(proposalCard);
+                    proposalsContainer.appendChild(proposalCard);
                 });
                 
             } catch (error) {
                 console.error('Error loading proposals:', error);
+                proposalsContainer.innerHTML = `<p style="color: var(--danger);">Error loading proposals: ${error.message}</p>`;
             }
         }
 
-        async function notifyProposalView(proposalId) {
-            // In a real app, you would implement this using Firebase Cloud Messaging
-            // or send an email notification via a Cloud Function
-            console.log(`Proposal ${proposalId} was viewed - notification would be sent here`);
-        }
-
-        async function notifyProposalResponse(proposalId, response) {
-            // In a real app, you would implement this using Firebase Cloud Messaging
-            // or send an email notification via a Cloud Function
-            console.log(`Proposal ${proposalId} got response ${response} - notification would be sent here`);
-            
-            // Example of how you might implement this with a Cloud Function:
-            // const sendNotification = functions.httpsCallable('sendProposalResponseNotification');
-            // await sendNotification({ proposalId, response });
-        }
-
-        function requestNotificationPermission() {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    console.log('Notification permission granted.');
-                    // You would set up Firebase Cloud Messaging here
-                }
-            });
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
         }
 
         // Global functions for buttons
         window.copyToClipboard = function(text) {
             navigator.clipboard.writeText(text).then(() => {
-                alert('Link copied to clipboard!');
+                // Show a nice toast notification
+                const toast = document.createElement('div');
+                toast.textContent = 'Link copied to clipboard!';
+                toast.style.position = 'fixed';
+                toast.style.bottom = '20px';
+                toast.style.left = '50%';
+                toast.style.transform = 'translateX(-50%)';
+                toast.style.backgroundColor = 'var(--primary)';
+                toast.style.color = 'white';
+                toast.style.padding = '10px 20px';
+                toast.style.borderRadius = '8px';
+                toast.style.zIndex = '9999';
+                toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
             });
         };
 
@@ -443,21 +1084,22 @@
             const proposalLink = `${window.location.origin}${window.location.pathname}?proposal=${proposalId}`;
             if (navigator.share) {
                 navigator.share({
-                    title: 'You have a proposal!',
+                    title: 'You have a special proposal!',
                     text: 'Someone wants to know your answer...',
                     url: proposalLink,
                 }).catch(console.error);
             } else {
-                // Fallback for browsers that don't support Web Share API
                 copyToClipboard(proposalLink);
             }
         };
 
-        window.viewProposal = function(proposalId) {
+        window.viewProposalDetails = function(proposalId) {
             window.open(`?proposal=${proposalId}`, '_blank');
         };
 
         // All previous authentication code remains the same
+        // (login, signup, profile management, etc.)
     </script>
 </body>
-</html>  
+</html>
+        
